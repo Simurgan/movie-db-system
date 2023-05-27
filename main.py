@@ -1,9 +1,29 @@
-from flask import Flask, render_template
-from datetime import date
+from flask import Flask, render_template, request
+from datetime import date, datetime
+from flask_sqlalchemy import SQLAlchemy
+
 
 # Create a Flask Instance
 app = Flask(__name__)
 
+"""
+#add database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password123@localhost/our_users'
+
+#Initialize the database
+db = SQLAlchemy(app)
+
+#create model
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key=True) 
+    name = db.Column(db.String(200), nullable=False) 
+    email = db.Column(db.String(200), unique=True) 
+    password = db.Column(db.String(200)) 
+
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
+"""
 # Create a rouote decorator
 @app.route('/')
 def index():
@@ -12,6 +32,7 @@ def index():
 @app.route('/signin/')
 def sign_in():
     return render_template("signin.html")
+
 
 @app.route('/admin/')
 def admin():
@@ -162,15 +183,17 @@ def director():
     }
     return render_template("director.html", content=content)
 
-@app.route('/audience/')
+@app.route('/audience/', methods=['GET', 'POST'])
 def audience():
+    input_data = request.form.get('sessionID')
+    print(input_data)
     content = {
         "movies": {
             "director": "director1",
             "movieList": [
                 {
                     "movieID": 0,
-                    "movieName": "The Departed",
+                    "movieName": input_data,
                     "directorUsername": "kyle.balda",
                     "platform": "Netflix",
                     "predecessorsList": "Bumerang Cehennemi, Deli Yürek",

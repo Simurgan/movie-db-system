@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from datetime import date
 
 # Create a Flask Instance
 app = Flask(__name__)
@@ -91,6 +92,75 @@ def admin():
         ]
     }
     return render_template("admin.html", content=content)
+
+@app.route('/director/')
+def director():
+    content = {
+        "movieAudiences": {
+            "movieID": 7,
+            "movieName": "Yandım Ali: Son Osmanlı",
+            "audiences": [
+                {
+                    "username": "crazy_boy_80",
+                    "name": "Ömer Şükrü",
+                    "surname": "Uyduran"
+                },
+                {
+                    "username": "banker_bilo_27",
+                    "name": "Bilal",
+                    "surname": "Atım"
+                }
+            ]
+        },
+        "availableTheatres": {
+            "date": date.today(),
+            "slot": 1,
+            "theatres": [
+                {
+                    "theatreID": 7,
+                    "district": "Arizona",
+                    "capacity": 100
+                },
+                {
+                    "theatreID": 3,
+                    "district": "Los Angeles",
+                    "capacity": 60
+                }, 
+                {
+                    "theatreID": 2,
+                    "district": "Hollywood",
+                    "capacity": 40
+                }
+            ]
+        },
+        "directorsMovies": [
+            {
+                "movieID": 9,
+                "movieName": "Ice Age 3",
+                "theatreID": 9,
+                "date": date.today(),
+                "timeSlot": 1,
+                "predecessors": "Ice Age 2, Ice Age 1"
+            },
+            {
+                "movieID": 7,
+                "movieName": "Shrek 3",
+                "theatreID": 4,
+                "date": date.today(),
+                "timeSlot": 2,
+                "predecessors": "Shrek 2, Shrek 1"
+            },
+            {
+                "movieID": 1,
+                "movieName": "John Wick 3",
+                "theatreID": 54,
+                "date": date.today(),
+                "timeSlot": 3,
+                "predecessors": "John Wick 2, John Wick 1"
+            }
+        ]
+    }
+    return render_template("director.html", content=content)
 
 @app.route('/audience/')
 def audience():

@@ -93,7 +93,6 @@ def admin():
     }
     return render_template("admin.html", content=content)
 
-
 @app.route('/director/')
 def director():
     content = {
@@ -162,6 +161,74 @@ def director():
         ]
     }
     return render_template("director.html", content=content)
+
+@app.route('/audience/')
+def audience():
+    content = {
+        "movies": {
+            "director": "director1",
+            "movieList": [
+                {
+                    "movieID": 0,
+                    "movieName": "The Departed",
+                    "directorUsername": "kyle.balda",
+                    "platform": "Netflix",
+                    "predecessorsList": "Bumerang Cehennemi, Deli Yürek",
+                    "theatreID": 5,
+                    "district": "New York",
+                    "timeSlot": 2
+                },
+                {
+                    "movieID": 4,
+                    "movieName": "The Wolf of The Wall Street",
+                    "directorUsername": "kyle.balda",
+                    "platform": "Netflix",
+                    "predecessorsList": "Bumerang Cehennemi, Deli Yürek",
+                    "theatreID": 7,
+                    "district": "Arizona",
+                    "timeSlot": 3
+                },
+                {
+                    "movieID": 9,
+                    "movieName": "Goodfellas",
+                    "directorUsername": "kyle.balda",
+                    "platform": "Netflix",
+                    "predecessorsList": "Bumerang Cehennemi, Deli Yürek",
+                    "theatreID": 9,
+                    "district": "Coralado",
+                    "timeSlot": 1
+                }
+            ]
+        },
+        "userRating": {
+            "username": "audience_1",
+            "ratings": [
+                {
+                    "movieID": 0,
+                    "movieName": "Hateful Eight",
+                    "rating": 4.3,
+                    "sessionID": 12930,
+                    "overallRating": 4.1
+                },
+                {
+                    "movieID": 1,
+                    "movieName": "Pulp Fiction",
+                    "rating": "",
+                    "sessionID": 12400,
+                    "overallRating": 4
+                },
+                {
+                    "movieID": 2,
+                    "movieName": "Django: Unchained",
+                    "rating": 4.8,
+                    "sessionID": 12530,
+                    "overallRating": 4.3
+                }
+            ]
+        },
+        
+    }
+    return render_template("audience.html", content=content)
 
 @app.route('/instance_user_page/<name>')
 def instance_user_page(name):

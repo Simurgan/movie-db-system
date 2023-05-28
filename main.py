@@ -187,6 +187,9 @@ def director():
     }
     return render_template("director.html", content=content)
 
+
+
+
 @app.route('/audience/', methods=['GET', 'POST'])
 def audience():
     input_data = request.form.get('sessionID')
@@ -286,13 +289,17 @@ def login():
     cursor = mydb.cursor()
 
     # Execute a SELECT query to retrieve the user with the given username and password
-    query = "SELECT * FROM users WHERE userName = %s AND password = %s"
-    cursor.execute(query, (username, password))
+    user_query = "SELECT * FROM users WHERE userName = %s AND password = %s"
+    cursor.execute(user_query, (username, password))
     # Fetch the result of the query
     user = cursor.fetchone()
 
-    admin_query = "SELECT * FROM directors WHERE username = %s"
-    cursor.execute(admin_query, (username,))
+    director_query = "SELECT * FROM directors WHERE username = %s"
+    cursor.execute(director_query, (username,))
+    director = cursor.fetchone()
+
+    admin_query = "SELECT * FROM databasemanagers WHERE username = %s  AND password = %s"
+    cursor.execute(admin_query, (username,password))
     admin = cursor.fetchone()
 
 
@@ -300,12 +307,64 @@ def login():
     cursor.close()
     mydb.close()
 
+    if admin:
+        return redirect('/admin')
+
     # Check if a user with the given username and password exists
-    if user and admin:
+    elif user and director:
         # User exists, perform the login action (e.g., redirect to a dashboard)
-        return redirect('/admin') 
+        return redirect('/director') 
     elif user:
          return redirect('/audience') 
     else:
         # User does not exist, display an error message
         return 'Invalid credentials'
+"""
+
+@app.route('/add-user', methods=['GET', 'POST'])
+def addNewUser():
+    if request.method == 'POST':
+        # Retrieve the username and password from the registration form
+        username = request.form.get('username')
+        password = request.form.get('password')
+        name = request.form.get('name')
+        surname = request.form.get('surname')
+
+                # Establish a connection to the MySQL database
+        connection = mysql.connector.connect(
+            host='your_host',
+            user='your_username',
+            password='your_password',
+            database='your_database'
+        )
+
+        # Create a cursor object to interact with the database
+        cursor = connection.cursor()
+
+        query = "INSERT INTO users (username, password, namei surname) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (username, password, name, surname))
+        
+        type = request.form.get('type')
+        if type=="director":
+            nationality = request.form.get('nationality')
+            platformID = request.form.get('platformID')
+
+            query = "INSERT INTO directors (username, nationality, platformID) VALUES (%s, %s, %s)"
+            cursor.execute(query, (username, nationality, platformID))
+
+        else:
+            query = "INSERT INTO audiences (username) VALUES (%s)"
+            cursor.execute(query, (username))
+
+        # Commit the transaction and close the cursor and database connection
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        # Display a success message or redirect the user to a success page
+        return 'Registration successful'
+
+    else:
+        return render_template('admin.html')
+
+"""

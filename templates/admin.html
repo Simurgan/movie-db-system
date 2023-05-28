@@ -31,6 +31,7 @@
             name="username"
             placeholder="Username"
             id="form2Example1"
+            name="username"
             class="form-control"
             required
           />
@@ -38,6 +39,7 @@
             name="password"
             placeholder="Password"
             id="form2Example1"
+            name="password"
             class="form-control"
             required
           />
@@ -45,6 +47,7 @@
             name="name"
             placeholder="Name"
             id="form2Example1"
+            name="name"
             class="form-control"
             required
           />
@@ -52,6 +55,7 @@
             name="surname"
             placeholder="Surname"
             id="form2Example1"
+            name="surname"
             class="form-control"
             required
           />
@@ -65,6 +69,14 @@
             name="nation"
             placeholder="Nationality"
             id="nationality-form"
+            name="nationality"
+            class="form-control"
+            style="display: none"
+          />
+          <input
+            placeholder="Platform ID"
+            id="platform-id-form"
+            name="platformID"
             class="form-control"
             style="display: none"
           />
@@ -342,8 +354,10 @@
       function showNationality(that) {
         if (that.value == "director") {
           document.getElementById("nationality-form").style.display = "block";
+          document.getElementById("platform-id-form").style.display = "block";
         } else {
           document.getElementById("nationality-form").style.display = "none";
+          document.getElementById("platform-id-form").style.display = "none";
         }
       }
     </script>

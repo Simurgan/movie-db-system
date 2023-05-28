@@ -22,10 +22,13 @@
             padding: 20px;
             border: 3px solid grey;
           "
-          method="POST" action="/admin"
+          method="POST"
+          action="/admin/"
         >
+          <input type="hidden" name="form_name" value="add-new-user" />
           <h2 style="text-align: center">Add new user</h2>
           <input
+            name="username"
             placeholder="Username"
             id="form2Example1"
             name="username"
@@ -33,6 +36,7 @@
             required
           />
           <input
+            name="password"
             placeholder="Password"
             id="form2Example1"
             name="password"
@@ -40,6 +44,7 @@
             required
           />
           <input
+            name="name"
             placeholder="Name"
             id="form2Example1"
             name="name"
@@ -47,6 +52,7 @@
             required
           />
           <input
+            name="surname"
             placeholder="Surname"
             id="form2Example1"
             name="surname"
@@ -54,17 +60,13 @@
             required
           />
 
-          <select
-            name="user-type-select"
-            id="user-type-select"
-            name="type"
-            onchange="showNationality(this);"
-          >
+          <select name="user-type" onchange="showNationality(this);">
             <option value="audience">Audience</option>
             <option value="director">Director</option>
           </select>
 
           <input
+            name="nation"
             placeholder="Nationality"
             id="nationality-form"
             name="nationality"
@@ -94,9 +96,13 @@
             padding: 20px;
             border: 3px solid grey;
           "
+          method="POST"
+          action="/admin/"
         >
+          <input type="hidden" name="form_name" value="delete-audience" />
           <h2 style="text-align: center">Delete Audience</h2>
           <input
+            name="username"
             placeholder="Username"
             id="form2Example1"
             class="form-control"
@@ -116,15 +122,24 @@
             padding: 20px;
             border: 3px solid grey;
           "
+          method="POST"
+          action="/admin/"
         >
+          <input
+            type="hidden"
+            name="form_name"
+            value="update-director-platform"
+          />
           <h2 style="text-align: center">Update Director Platform ID</h2>
           <input
+            name="username"
             placeholder="Username"
             id="form2Example1"
             class="form-control"
             required
           />
           <input
+            name="platform_ID"
             placeholder="Platform ID"
             id="form2Example1"
             class="form-control"
@@ -147,8 +162,10 @@
           "
         >
           <h2 style="text-align: center">View Average Rating</h2>
-          <form>
+          <form method="POST" action="/admin/">
+            <input type="hidden" name="form_name" value="view-average-rating" />
             <input
+              name="movie_ID"
               placeholder="Movie ID"
               id="form2Example1"
               class="form-control"
@@ -169,9 +186,11 @@
               <th>Overall Rating</th>
             </tr>
             <tr>
+              {% if content.movieRating %}
               <td>{{ content.movieRating.movieID }}</td>
               <td>{{ content.movieRating.movieName }}</td>
               <td>{{ content.movieRating.overallRating }}</td>
+              {% endif %}
             </tr>
           </table>
         </div>
@@ -187,8 +206,10 @@
         >
           <div style="margin: auto; display: flex; flex-direction: row">
             <h2 style="margin-right: 20px">List ratings</h2>
-            <form>
+            <form method="POST" action="/admin/">
+              <input type="hidden" name="form_name" value="list-user-ratings" />
               <input
+                name="username"
                 placeholder="Username"
                 id="form2Example1"
                 class="form-control"
@@ -204,20 +225,24 @@
             </form>
           </div>
           <div style="margin: auto">
-            <h3>Ratings of user: {{ content.userRating.username }}</h3>
+            <h3>
+              Ratings of user: {% if content.userRating %} {{
+              content.userRating.username }} {% endif %}
+            </h3>
             <table class="table">
               <tr>
                 <th>Moive ID</th>
                 <th>Movie Name</th>
                 <th>Rating</th>
               </tr>
-              {% for rating in content.userRating.ratings %}
+              {% if content.userRating %} {% for rating in
+              content.userRating.ratings %}
               <tr>
                 <td>{{ rating.movieID }}</td>
                 <td>{{ rating.movieName }}</td>
                 <td>{{ rating.rating }}</td>
               </tr>
-              {% endfor %}
+              {% endfor %} {% endif %}
             </table>
           </div>
         </div>
@@ -232,8 +257,21 @@
         >
           <div style="margin: auto; display: flex; flex-direction: row">
             <h2 style="margin-right: 20px">List Movies</h2>
-            <form>
+            <form
+              value="formthis"
+              method="POST"
+              action="/admin/"
+              id="list-movie-form"
+              method="POST"
+              action="/admin/"
+            >
               <input
+                type="hidden"
+                name="form_name"
+                value="list-director-movies"
+              />
+              <input
+                name="username"
                 placeholder="Director username"
                 id="form2Example1"
                 class="form-control"
@@ -249,7 +287,10 @@
             </form>
           </div>
           <div style="margin: auto">
-            <h3>Movies of director: {{ content.movies.director }}</h3>
+            <h3>
+              Movies of director:{% if content.movies %} {{
+              content.movies.director }} {% endif %}
+            </h3>
             <table class="table">
               <tr>
                 <th>Moive ID</th>
@@ -258,7 +299,7 @@
                 <th>District</th>
                 <th>Time Slot</th>
               </tr>
-              {% for film in content.movies.movieList %}
+              {% if content.movies %} {% for film in content.movies.movieList %}
               <tr>
                 <td>{{ film.movieID }}</td>
                 <td>{{ film.movieName }}</td>
@@ -266,7 +307,7 @@
                 <td>{{ film.district }}</td>
                 <td>{{ film.timeSlot }}</td>
               </tr>
-              {% endfor %}
+              {% endfor %} {% endif %}
             </table>
           </div>
         </div>
@@ -276,14 +317,17 @@
       >
         <div style="display: flex; flex-direction: row">
           <h2 style="text-align: center">All directors</h2>
-          <button
-            id="display-directors"
-            type="submit"
-            class="btn btn-primary btn-block mb-4"
-            style="margin-left: 20px"
-          >
-            List all directors
-          </button>
+          <form>
+            <input type="hidden" name="form_name" value="list-directors" />
+            <button
+              id="display-directors"
+              type="submit"
+              class="btn btn-primary btn-block mb-4"
+              style="margin-left: 20px"
+            >
+              List all directors
+            </button>
+          </form>
         </div>
         <table class="table">
           <tr>
@@ -293,7 +337,8 @@
             <th>Nation</th>
             <th>Platform_id</th>
           </tr>
-          {% for director in content.directorList %}
+          {% if content.directorList %} {% for director in content.directorList
+          %}
           <tr>
             <td>{{ director.username }}</td>
             <td>{{ director.name }}</td>
@@ -301,7 +346,7 @@
             <td>{{ director.nation }}</td>
             <td>{{ director.platform_id }}</td>
           </tr>
-          {% endfor %}
+          {% endfor %} {% endif %}
         </table>
       </div>
     </div>

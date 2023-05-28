@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 from datetime import date, datetime
 from flask_sqlalchemy import SQLAlchemy
 from admin_request_helpers import handle_request
-import mysql.connector
+from db import database
 
 # Create a Flask Instance
 app = Flask(__name__)
@@ -286,34 +286,20 @@ def login():
     password = request.form.get('password')
 
     # Establish a connection to the MySQL database
-    mydb = mysql.connector.connect(
-	host="localhost",
-	user="root",
-	passwd = "password123",
-  	database="movie_db"
-    )
-
-    # Create a cursor object to interact with the database
-    cursor = mydb.cursor()
+    db = database()
 
     # Execute a SELECT query to retrieve the user with the given username and password
     user_query = "SELECT * FROM users WHERE userName = %s AND password = %s"
-    cursor.execute(user_query, (username, password))
-    # Fetch the result of the query
-    user = cursor.fetchone()
+    user = db.execute(user_query, (username, password))
 
     director_query = "SELECT * FROM directors WHERE username = %s"
-    cursor.execute(director_query, (username,))
-    director = cursor.fetchone()
+    director = db.execute(director_query, (username,))
 
     admin_query = "SELECT * FROM databasemanagers WHERE username = %s  AND password = %s"
-    cursor.execute(admin_query, (username,password))
-    admin = cursor.fetchone()
-
+    admin = db.execute(admin_query, (username,password))
 
     # Close the cursor and database connection
-    cursor.close()
-    mydb.close()
+    db.close()
 
     if admin:
         return redirect('/admin')

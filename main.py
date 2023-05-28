@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from datetime import date, datetime
 from flask_sqlalchemy import SQLAlchemy
-from request_helpers import handle_request
+from admin_request_helpers import handle_request
 
 
 # Create a Flask Instance

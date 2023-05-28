@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from datetime import date, datetime
 from flask_sqlalchemy import SQLAlchemy
+import mysql.connector
 
 
 # Create a Flask Instance
@@ -29,9 +30,12 @@ class Users(db.Model):
 def index():
     return render_template("index.html")
 
-@app.route('/signin/')
-def sign_in():
-    return render_template("signin.html")
+@app.route('/signin/', methods=['GET', 'POST'])
+def signin():
+    if request.method == 'POST':
+        return login()
+    else:
+        return render_template("signin.html")
 
 
 @app.route('/admin/')
@@ -264,3 +268,44 @@ def instance_user_page(name):
 # title
 # trim
 # striptags
+
+def login():
+    # Retrieve the username and password from the login form
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    # Establish a connection to the MySQL database
+    mydb = mysql.connector.connect(
+	host="localhost",
+	user="root",
+	passwd = "password123",
+  	database="movie_db"
+    )
+
+    # Create a cursor object to interact with the database
+    cursor = mydb.cursor()
+
+    # Execute a SELECT query to retrieve the user with the given username and password
+    query = "SELECT * FROM users WHERE userName = %s AND password = %s"
+    cursor.execute(query, (username, password))
+    # Fetch the result of the query
+    user = cursor.fetchone()
+
+    admin_query = "SELECT * FROM directors WHERE username = %s"
+    cursor.execute(admin_query, (username,))
+    admin = cursor.fetchone()
+
+
+    # Close the cursor and database connection
+    cursor.close()
+    mydb.close()
+
+    # Check if a user with the given username and password exists
+    if user and admin:
+        # User exists, perform the login action (e.g., redirect to a dashboard)
+        return redirect('/admin') 
+    elif user:
+         return redirect('/audience') 
+    else:
+        # User does not exist, display an error message
+        return 'Invalid credentials'

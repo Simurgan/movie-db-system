@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, redirect, session
-from datetime import date, datetime
-from flask_sqlalchemy import SQLAlchemy
 from admin_request_helpers import handle_request
 from director_request_helpers import handle_director_request
 from audience_request_helpers import handle_audience_request
@@ -106,18 +104,6 @@ def audience():
             content["data"][response["data"]["field"]] = response["data"]["data"]
 
     return render_template("audience.html", content=content)
-
-@app.route('/instance_user_page/<name>')
-def instance_user_page(name):
-    return render_template("instance.html", name=name)
-
-# some filters
-# safe
-# capitalize
-# upper
-# title
-# trim
-# striptags
 
 def login():
     # Retrieve the username and password from the login form

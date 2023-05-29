@@ -54,94 +54,156 @@ def add_new_user(data):
   return resp
 
 def delete_audience(data):
-  #db things
   username = data.get('username')
+
+  db = database()
+
+  # check if audience exist
+
+  query_check = "SELECT * FROM audiences WHERE userName = '" + username + "'"
+  rec = db.execute(query_check)
+
+
+  status = "Success"
+  if not rec:
+    status = "Fail: no such audience"
+  else:
+    query_admin = "DELETE FROM Users WHERE userName = '" + username + "'"
+    query_audience = "DELETE FROM Audiences WHERE userName = '" + username + "'"
+
+    check_ae = db.execute(query_admin)
+    check_as = db.save()
+
+    check_ue = db.execute(query_audience)
+    check_us = db.save()
+
+    if check_ae == False or (not check_as) or check_ue == False or (not check_us):
+      status = "Failed to delete audience"
   
   resp = {
     "feedback_to": "delete_audience",
-    "status": username,
+    "status": status,
     "data": None
   }
 
   return resp
 
 def update_director_platform(data):
-  #db things
   username = data.get('username')
   platform_ID = data.get('platform_ID')
 
-  query = username + " " + platform_ID
-  
+  status = "Success"
+  db = database()
+
+  # check if director exist
+  query_check = "SELECT * FROM directors WHERE userName = '" + username + "'"
+  rec = db.execute(query_check)
+  if not rec:
+    status = "Fail: no such director"
+  else:
+    query = "UPDATE directors SET platformID = " + platform_ID + " WHERE userName = '" + username + "'"
+    e_check = db.execute(query)
+    s_check = db.save()
+
+    if e_check == False or (not s_check):
+      status = "Failed to update director platform"
+    else:
+      # update the movies
+      m_query = "UPDATE movies SET directorPlatformID = " + platform_ID + " WHERE directorUserName = '" + username + "'"
+      me_check = db.execute(m_query)
+      ms_check = db.save()
+
+      if me_check == False or (not ms_check):
+        status = "Failed to update movies of the director even though update of itself was successful!"
+
   resp = {
     "feedback_to": "update_director_platform",
-    "status": query,
+    "status": status,
     "data": None
   }
 
   return resp
 
 def view_average_rating(data):
-  #db things
-  
   movie_ID = data.get('movie_ID')
+  
+  status = "Success"
+  ret_data = None
 
-  ret_data = {
-    "field": "movieRating",
-    "data": {
-      "movieID": movie_ID,
-      "movieName": "Inception",
-      "overallRating": 4.5
+  db = database()
+
+  # check if movie exists
+  query_check = "SELECT * FROM movies WHERE movieID = " + movie_ID
+  rec = db.execute(query_check)
+  if not rec:
+    status = "Fail: no such movie or another internal error"
+  else:
+    ret_data = {
+      "field": "movieRating",
+      "data": {
+        "movieID": rec[0][0],
+        "movieName": rec[0][1],
+        "overallRating": rec[0][3]
+      }
     }
-  }
   
   resp = {
     "feedback_to": "view_average_rating",
-    "status": "Success!",
+    "status": status,
     "data": ret_data
   }
 
   return resp
 
 def list_user_ratings(data):
-  #db things
-
   username = data.get('username')
 
-  ret_data = {
-    "field": "userRating",
-    "data": {
-      "username": username,
-      "ratings": [
-          {
-              "movieID": 0,
-              "movieName": "Hateful Eight",
-              "rating": 4.9
-          },
-          {
-              "movieID": 1,
-              "movieName": "Pulp Fiction",
-              "rating": 4.9
-          },
-          {
-              "movieID": 2,
-              "movieName": "Django: Unchained",
-              "rating": 4.8
-          }
-      ]
-    }
-  }
+  status = "Success"
+  ret_data = None
+
+  db = database()
+
+  # check if audience exists
+  query_check = "SELECT * FROM audiences WHERE userName = '" + username + "'"
+  rec = db.execute(query_check)
+  if not rec:
+    status = "Fail: no such audience or another internal error"
+  else:
+    # check if ratings exist
+    ratings_query = "SELECT movieID, rating FROM ratings WHERE userName = '" + username + "'"
+    ratings = db.execute(ratings_query)
+    if not ratings:
+      status = "Fail: this audience has no ratings"
+    else:
+      ret_data = {
+        "field": "userRating",
+        "data": {
+          "username": username,
+          "ratings": []
+        }
+      }
+      for rec in ratings:
+        # get movieName
+        m_name_query = "SELECT movieName FROM movies WHERE movieID = " + str(rec[0])
+        m_n_res = db.execute(m_name_query)
+        if not m_n_res:
+          status = "Fail: internal error"
+        else:
+          ret_data["data"]["ratings"].append({
+            "movieID": rec[0],
+            "movieName": m_n_res[0][0],
+            "rating": rec[1]
+          })
 
   resp = {
     "feedback_to": "list_user_ratings",
-    "status": "success",
+    "status": status,
     "data": ret_data
   }
 
   return resp
 
 def list_director_movies(data):
-  #db things
-
   username = data.get('username')
   
   ret_data = {
@@ -183,38 +245,34 @@ def list_director_movies(data):
   return resp
 
 def list_directors(data):
-  #db things
+  status = "Success"
+  ret_data = None
 
-  ret_data = {
-    "field": "directorList",
-    "data": [
-      {
-        "username": "director1",
-        "name": "director_name1",
-        "surname": "director_surname1",
-        "nation": "director_nationality1",
-        "platform_id": "director_platformid1"
-      },
-      {
-        "username": "director2",
-        "name": "director_name2",
-        "surname": "director_surname2",
-        "nation": "director_nationality2",
-        "platform_id": "director_platformid2"
-      },
-      {
-        "username": "director3",
-        "name": "director_name3",
-        "surname": "director_surname3",
-        "nation": "director_nationality3",
-        "platform_id": "director_platformid3"
-      }
-    ]
-  }
+  db = database()
+
+  query = "SELECT U.userName, U.name, U.surname, D.nationality, D.platformID  FROM Directors D INNER JOIN Users U ON D.userName = U.userName"
+  directors = db.execute(query)
+
+  if not directors:
+    status = "Fail: no director record or internal error"
+  else:
+    ret_data = {
+      "field": "directorList",
+      "data": []
+    }
+
+    for dir in directors:
+      ret_data["data"].append({
+        "username": dir[0],
+        "name": dir[1],
+        "surname": dir[2],
+        "nation": dir[3],
+        "platform_id": dir[4]
+      })
 
   resp = {
     "feedback_to": "list_directors",
-    "status": "success",
+    "status": status,
     "data": ret_data
   }
 

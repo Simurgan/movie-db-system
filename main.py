@@ -105,18 +105,6 @@ def audience():
 
     return render_template("audience.html", content=content)
 
-@app.route('/instance_user_page/<name>')
-def instance_user_page(name):
-    return render_template("instance.html", name=name)
-
-# some filters
-# safe
-# capitalize
-# upper
-# title
-# trim
-# striptags
-
 def login():
     # Retrieve the username and password from the login form
     username = request.form.get('username')

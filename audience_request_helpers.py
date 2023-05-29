@@ -51,25 +51,22 @@ def rate_movie(data, username):
     #db things
     db = database()
 
+    status = "Success"
     sessionID = data.get('sessionID')
     rate = data.get('rate')
 
     movieID_query = "SELECT movieID FROM MovieSessions WHERE sessionID = " + sessionID
     movieID_data = db.execute(movieID_query)
-    s_check = db.save()
 
-    rate_query = 'INSERT INTO Ratings (userName, movieID, rating) VALUES ("' + username + '", ' + str(movieID_data[0][0]) + "," + rate + ")"
-    buy_data = db.execute(rate_query)
-    s_check = db.save()
+    att_query = "SELECT * FROM attendances WHERE sessionID = " + sessionID + " AND userName = '" + username +"'"
+    check_att = db.execute(att_query)
 
-    print(rate_query)
-
-    status = "Success"
-
-  
-
-    if not ((not buy_data == False) and s_check):
-        status = "Fail"
+    if check_att:
+        rate_query = 'INSERT INTO Ratings (userName, movieID, rating) VALUES ("' + username + '", ' + str(movieID_data[0][0]) + "," + rate + ")"
+        buy_data = db.execute(rate_query)
+        s_check = db.save()
+    else:
+        status = "Fail: you have to buy a ticket first"
 
     resp = {
     "feedback_to": "rate_movie",

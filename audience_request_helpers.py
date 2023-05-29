@@ -25,12 +25,13 @@ def buy_a_ticket(data, username):
 
     else:
 
-        buy_query = 'INSERT INTO Attendances (userName, sessionID) VALUES ("' + username + '", ' + sessionID +")"
 
+        buy_query = 'INSERT INTO Attendances (userName, sessionID) VALUES ("' + username + '", ' + sessionID +")"
         e_check = db.execute(buy_query)
         s_check = db.save()
 
         status = "Success"
+
 
     
 
@@ -50,19 +51,24 @@ def rate_movie(data, username):
     #db things
     db = database()
 
-    movieID = data.get('movieID')
-    predecessorMovieID = data.get('predecessorMovieID')
+    sessionID = data.get('sessionID')
+    rate = data.get('rate')
 
-    query = "INSERT INTO Preceedings (movieID, predecessorMovieID) VALUES ('" + movieID + "', '" + predecessorMovieID +"')"
-
-    e_check = db.execute(query)
+    movieID_query = "SELECT movieID FROM MovieSessions WHERE sessionID = " + sessionID
+    movieID_data = db.execute(movieID_query)
     s_check = db.save()
+
+    rate_query = 'INSERT INTO Ratings (userName, movieID, rating) VALUES ("' + username + '", ' + str(movieID_data[0][0]) + "," + rate + ")"
+    buy_data = db.execute(rate_query)
+    s_check = db.save()
+
+    print(rate_query)
 
     status = "Success"
 
   
 
-    if not ((not e_check == False) and s_check):
+    if not ((not buy_data == False) and s_check):
         status = "Fail"
 
     resp = {
@@ -129,10 +135,11 @@ def list_bought_ticket(data, username):
 
 
     bought_and_rated_query = 'SELECT M.movieID, M.movieName, MS.sessionID, R.rating, M.averageRating FROM movies M INNER JOIN MovieSessions MS INNER JOIN attendances A INNER JOIN ratings R ON A.sessionID = MS.sessionID AND MS.movieID = M.movieID AND R.movieID = MS.movieID  AND A.userName = R.userName WHERE R.userName= "' + username + '"'
-    bought_query = 'SELECT M.movieID, M.movieName, MS.sessionID, R.rating, M.averageRating FROM movies M INNER JOIN MovieSessions MS INNER JOIN attendances A INNER JOIN ratings R ON A.sessionID = MS.sessionID AND MS.movieID = M.movieID AND A.userName = R.userName WHERE R.userName= "' + username + '"'
 
     boughtAndRatedData = db.execute(bought_and_rated_query)
     s_check = db.save()
+    
+    bought_query = 'SELECT M.movieID, M.movieName, MS.sessionID, M.averageRating, M.averageRating FROM movies M INNER JOIN MovieSessions MS INNER JOIN attendances A ON A.sessionID = MS.sessionID AND MS.movieID = M.movieID WHERE A.userName= "' + username + '"'
 
     boughtData = db.execute(bought_query)
     s_check = db.save()
@@ -140,9 +147,15 @@ def list_bought_ticket(data, username):
     status = "Success"
 
     for i in range(len(boughtData)):
-        if boughtData[i] not in boughtAndRatedData:
-            boughtData[i] = list(boughtData[i])
-            boughtData[i][3]=""
+        boughtData[i] = list(boughtData[i])
+        boughtData[i][3] = " "
+
+    for i in range(len(boughtData)):
+        for j in range(len(boughtAndRatedData)):
+            if boughtData[i][0] == boughtAndRatedData[j][0]:
+                boughtData[i][3] = boughtAndRatedData[j][3]
+        
+    print(boughtData)
 
     if not ((not boughtAndRatedData == False) and s_check):
         status = "Fail"

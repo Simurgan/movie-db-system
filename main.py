@@ -3,6 +3,7 @@ from datetime import date, datetime
 from flask_sqlalchemy import SQLAlchemy
 from admin_request_helpers import handle_request
 from director_request_helpers import handle_director_request
+from audience_request_helpers import handle_audience_request
 from db import database
 
 # Create a Flask Instance
@@ -84,72 +85,26 @@ def director():
 
 @app.route('/audience/', methods=['GET', 'POST'])
 def audience():
-    input_data = request.form.get('sessionID')
-    print(input_data)
     content = {
-        "movies": {
-            "director": "director1",
-            "movieList": [
-                {
-                    "movieID": 0,
-                    "movieName": input_data,
-                    "directorUsername": "kyle.balda",
-                    "platform": "Netflix",
-                    "predecessorsList": "Bumerang Cehennemi, Deli Yürek",
-                    "theatreID": 5,
-                    "district": "New York",
-                    "timeSlot": 2
-                },
-                {
-                    "movieID": 4,
-                    "movieName": "The Wolf of The Wall Street",
-                    "directorUsername": "kyle.balda",
-                    "platform": "Netflix",
-                    "predecessorsList": "Bumerang Cehennemi, Deli Yürek",
-                    "theatreID": 7,
-                    "district": "Arizona",
-                    "timeSlot": 3
-                },
-                {
-                    "movieID": 9,
-                    "movieName": "Goodfellas",
-                    "directorUsername": "kyle.balda",
-                    "platform": "Netflix",
-                    "predecessorsList": "Bumerang Cehennemi, Deli Yürek",
-                    "theatreID": 9,
-                    "district": "Coralado",
-                    "timeSlot": 1
-                }
-            ]
+        "data": {
+            "movies": None,
+            "userRating": None
         },
-        "userRating": {
-            "username": "audience_1",
-            "ratings": [
-                {
-                    "movieID": 0,
-                    "movieName": "Hateful Eight",
-                    "rating": 4.3,
-                    "sessionID": 12930,
-                    "overallRating": 4.1
-                },
-                {
-                    "movieID": 1,
-                    "movieName": "Pulp Fiction",
-                    "rating": "",
-                    "sessionID": 12400,
-                    "overallRating": 4
-                },
-                {
-                    "movieID": 2,
-                    "movieName": "Django: Unchained",
-                    "rating": 4.8,
-                    "sessionID": 12530,
-                    "overallRating": 4.3
-                }
-            ]
-        },
-        
+        "feedbacks": {
+            "buy_a_ticket": "",
+            "rate_movie": "",
+            "list_movies": "",
+            "list_bought_ticket": ""
+        }
     }
+
+    if request.method == 'POST':
+        response = handle_audience_request(request.form, session["username"])
+
+        content["feedbacks"][response["feedback_to"]] = response["status"]
+        if response["data"]:
+            content["data"][response["data"]["field"]] = response["data"]["data"]
+
     return render_template("audience.html", content=content)
 
 @app.route('/instance_user_page/<name>')

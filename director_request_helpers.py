@@ -1,5 +1,4 @@
 from db import database
-import json
 
 def add_new_movie(data, username):
     # db things
@@ -91,11 +90,10 @@ def list_available_theatres(data, username):
     #db things
     db = database()
 
-    date = data.get('date')
     slot = data.get('slot')
 
 
-    query = "SELECT theatreID FROM TimeSlots WHERE slotDate ='" + date + "' AND slot = " + slot
+    query = "SELECT theatreID FROM TimeSlots WHERE slot = " + slot
 
     theatreIDs = db.execute(query)
     s_check = db.save()

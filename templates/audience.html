@@ -26,6 +26,7 @@
           action="/audience/"
         >
           <h2 style="text-align: center">Buy A Ticket</h2>
+          <input type="hidden" name="form_name" value="buy-a-ticket" />
           <input
             placeholder="SessionID"
             id="form2Example1"
@@ -42,6 +43,7 @@
           >
             Buy Ticket
           </button>
+          <p>{{ content.feedbacks.buy_a_ticket }}</p>
         </form>
         <div
           style="
@@ -52,7 +54,11 @@
           "
         >
           <h2 style="text-align: center">Rate Movie</h2>
-          <form>
+          <form
+            method="POST" 
+            action="/audience/">
+
+            <input type="hidden" name="form_name" value="rate-movie" />
             <input
               placeholder="Session ID"
               id="form2Example1"
@@ -72,6 +78,7 @@
             >
               Rate Movie
             </button>
+            <p>{{ content.feedbacks.rate_movie }}</p>
           </form>
         </div>
       </div>
@@ -87,7 +94,10 @@
         >
           <div style="margin: auto; display: flex; flex-direction: row">
             <h2 style="margin-right: 20px">All Movies</h2>
-            <form>
+            <form
+              method="POST"
+              action="/audience/">
+              <input type="hidden" name="form_name" value="list-movies" />
               <button
                 id="list-movies-submit"
                 type="submit"
@@ -95,6 +105,7 @@
               >
                 List Movies
               </button>
+              <p>{{ content.feedbacks.list_movies }}</p>
             </form>
           </div>
           <div style="margin: auto">
@@ -102,23 +113,23 @@
               <tr>
                 <th>Moive ID</th>
                 <th>Movie Name</th>
-                <th>Diretor's Name</th>
+                <th>Diretor's Username</th>
                 <th>Platform</th>
                 <th>Theatre ID</th>
                 <th>Time Slot</th>
                 <th>Predecessors List</th>
               </tr>
-              {% for film in content.movies.movieList %}
+              {% if content.data.movies %} {% for film in content.data.movies %}
               <tr>
-                <td>{{ film.movieID }}</td>
-                <td>{{ film.movieName }}</td>
-                <td>{{ film.directorUsername }}</td>
-                <td>{{ film.platform }}</td>
-                <td>{{ film.theatreID }}</td>
-                <td>{{ film.timeSlot }}</td>
-                <td>{{ film.predecessorsList }}</td>
+                <td>{{ film.0 }}</td>
+                <td>{{ film.1 }}</td>
+                <td>{{ film.2 }}</td>
+                <td>{{ film.3 }}</td>
+                <td>{{ film.4 }}</td>
+                <td>{{ film.5 }}</td>
+                <td>{{ film.6 }}</td>
               </tr>
-              {% endfor %}
+              {% endfor %} {% endif %}
             </table>
           </div>
         </div>
@@ -132,7 +143,11 @@
         >
           <div style="margin: auto; display: flex; flex-direction: row">
             <h2 style="margin-right: 20px">Bought Tickets</h2>
-            <form>
+            <form
+              method="POST"
+              action="/audience/">
+              <input type="hidden" name="form_name" value="list-bought-ticket" />
+
               <button
                 id="list-bought-ticket-submit"
                 type="submit"
@@ -140,6 +155,7 @@
               >
                 List Tickets
               </button>
+              <p>{{ content.feedbacks.list_bought_ticket }}</p>
             </form>
           </div>
           <div style="margin: auto">
@@ -151,15 +167,15 @@
                 <th>Rating</th>
                 <th>Overall Rating</th>
               </tr>
-              {% for rating in content.userRating.ratings %}
+              {% if content.data.userRating %} {% for rating in content.data.userRating %}
               <tr>
-                <td>{{ rating.movieID }}</td>
-                <td>{{ rating.movieName }}</td>
-                <td>{{ rating.sessionID }}</td>
-                <td>{{ rating.rating }}</td>
-                <td>{{ rating.overallRating }}</td>
+                <td>{{ rating.0 }}</td>
+                <td>{{ rating.1 }}</td>
+                <td>{{ rating.2 }}</td>
+                <td>{{ rating.3 }}</td>
+                <td>{{ rating.4 }}</td>
               </tr>
-              {% endfor %}
+              {% endfor %} {% endif %}
             </table>
           </div>
         </div>

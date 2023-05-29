@@ -187,37 +187,47 @@ def list_movie_audiences(data, username):
     db = database()
     movieID = data.get('movieID')
 
-    query = "SELECT sessionID FROM MovieSessions WHERE movieID ='" + movieID + "'"
+    query = "SELECT * FROM Movies WHERE movieID =" + movieID + " AND directorUserName = '" + username + "'"
 
-    movieSessionDatas = db.execute(query)
+    isDirectorsMovie = db.execute(query)
     s_check = db.save()
-
-    status = "Success"
 
     movieAudiences=[]
 
-    if not ((not movieSessionDatas == False) and s_check):
-        status = "Fail"
+    if isDirectorsMovie:
 
-    else:
-        for movieSession in movieSessionDatas:
-            session_query = "SELECT userName FROM Attendances WHERE sessionID = " + str(movieSession[0])
-            sessionData = db.execute(session_query)
-            s_check = db.save()
+        movieID_query = "SELECT sessionID FROM MovieSessions WHERE movieID ='" + movieID + "'"
 
-            if not ((not sessionData == False) and s_check):
-                status = "Fail"
+        movieSessionDatas = db.execute(movieID_query)
+        s_check = db.save()
 
-            for audiences in sessionData:
-                audiences_query = 'SELECT userName, name, surname FROM Users WHERE userName = "' + str(audiences[0]) + '"'
-                audiencesData = db.execute(audiences_query)
+        status = "Success"
+
+        
+
+        if not ((not movieSessionDatas == False) and s_check):
+            status = "Fail"
+
+        else:
+            for movieSession in movieSessionDatas:
+                session_query = "SELECT userName FROM Attendances WHERE sessionID = " + str(movieSession[0])
+                sessionData = db.execute(session_query)
                 s_check = db.save()
 
-                if not ((not audiencesData == False) and s_check):
+                if not ((not sessionData == False) and s_check):
                     status = "Fail"
 
-                movieAudiences.append(audiencesData[0])
-        print(movieAudiences)
+                for audiences in sessionData:
+                    audiences_query = 'SELECT userName, name, surname FROM Users WHERE userName = "' + str(audiences[0]) + '"'
+                    audiencesData = db.execute(audiences_query)
+                    s_check = db.save()
+
+                    if not ((not audiencesData == False) and s_check):
+                        status = "Fail"
+
+                    movieAudiences.append(audiencesData[0])
+    else:
+        status = "Fail"
 
 
     resp = {

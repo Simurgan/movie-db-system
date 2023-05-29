@@ -5,8 +5,8 @@ class database:
     self.db = mysql.connector.connect(
       host="localhost",
       user="root",
-      passwd="123456",
-      database="moviedbdb"
+      passwd="password123",
+      database="movie_db"
     )
 
     self.cursor = self.db.cursor()
@@ -14,7 +14,7 @@ class database:
   def execute(self, query):
     try:
       self.cursor.execute(query)
-      return self.cursor.fetchone()
+      return self.cursor.fetchall()
     except Exception as ex:
       print("execute error:")
       print(ex)

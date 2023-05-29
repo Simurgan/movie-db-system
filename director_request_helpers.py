@@ -1,0 +1,247 @@
+from db import database
+import json
+
+def add_new_movie(data, username):
+    # db things
+    db = database()
+
+    movieID = data.get('movieID')
+    movieName = data.get('movieName')
+    theatreID = data.get('theatreID')
+    timeSlot = data.get('timeSlot')
+
+    query = 'INSERT INTO Movies (movieID, movieName, timeSlot, averageRating, numOfRatings, directorUserName, theatreID) VALUES ("' + movieID + '", "' + movieName + '", "' + timeSlot + '", "' + "0" + '", "' + "0" + '", "' + username + '", ' + theatreID +")"
+
+    e_check = db.execute(query)
+    s_check = db.save()
+
+    status = "Success"
+
+  
+
+    if not ((not e_check == False) and s_check):
+        status = "Fail"
+
+    resp = {
+    "feedback_to": "add_new_movie",
+    "status": status,
+    "data": None
+    }
+
+    db.close()
+    return resp
+
+def add_predecessor(data, username):
+    #db things
+    db = database()
+
+    movieID = data.get('movieID')
+    predecessorMovieID = data.get('predecessorMovieID')
+
+    query = "INSERT INTO Preceedings (movieID, predecessorMovieID) VALUES ('" + movieID + "', '" + predecessorMovieID +"')"
+
+    e_check = db.execute(query)
+    s_check = db.save()
+
+    status = "Success"
+
+  
+
+    if not ((not e_check == False) and s_check):
+        status = "Fail"
+
+    resp = {
+    "feedback_to": "add_predecessor",
+    "status": status,
+    "data": None
+    }
+
+    db.close()
+    return resp
+
+def update_movie_name(data, username):
+    #db things
+    db = database()
+
+    movieID = data.get('movieID')
+    newMovieName = data.get('newMovieName')
+    
+    query = 'UPDATE Movies SET movieName = "' + newMovieName + '" WHERE movieID =' + movieID 
+
+    e_check = db.execute(query)
+    s_check = db.save()
+
+    status = "Success"
+
+  
+
+    if not ((not e_check == False) and s_check):
+        status = "Fail"
+
+    resp = {
+    "feedback_to": "update_movie_name",
+    "status": status,
+    "data": None
+    }
+
+    db.close()
+    return resp
+
+def list_available_theatres(data, username):
+    #db things
+    db = database()
+
+    date = data.get('date')
+    slot = data.get('slot')
+
+
+    query = "SELECT theatreID FROM TimeSlots WHERE slotDate ='" + date + "' AND slot = " + slot
+
+    theatreIDs = db.execute(query)
+    s_check = db.save()
+
+    status = "Success"
+
+    availableTheatres=[]
+
+    if not ((not theatreIDs == False) and s_check):
+        status = "Fail"
+
+    else:
+        for theatreID in theatreIDs:
+            theatre_query = "SELECT theatreID, theatreDistrict, theatreCapacity FROM Theatres WHERE theatreID = " + str(theatreID[0])
+            theatreInfo = db.execute(theatre_query)
+            s_check = db.save()
+
+            if theatreInfo:
+                theatreDict={
+                    "theatreID": theatreInfo[0][0],
+                    "district": theatreInfo[0][1],
+                    "capacity": theatreInfo[0][2]
+                }
+                availableTheatres.append(theatreInfo)
+
+
+
+    resp = {
+        "feedback_to": "add_new_movie",
+        "status": status,
+        "data": {
+            "field": "availableTheatres",
+            "data": availableTheatres
+        }
+    }
+
+    db.close()
+    return resp
+
+def list_my_movies(data, username):
+    #db things
+    db = database()
+
+
+    query = "SELECT movieID, movieName, theatreID, timeSlot FROM Movies WHERE directorUserName ='" + username + "'"
+
+    movieDatas = db.execute(query)
+    s_check = db.save()
+
+    status = "Success"
+
+    directorsMovies=[]
+
+    if not ((not movieDatas == False) and s_check):
+        status = "Fail"
+
+    else:
+        for movieData in movieDatas:
+            theatre_query = "SELECT predecessorMovieID FROM Preceedings WHERE movieID = " + str(movieData[0])
+            predecessorsData = db.execute(theatre_query)
+            s_check = db.save()
+
+            predecessorsList = ""
+            if predecessorsData:
+                for predecessor in predecessorsData:
+                    predecessorsList += str(predecessor[0]) + ", "
+            
+
+            movieData = list(movieData)
+            movieData.append(predecessorsList)
+            directorsMovies.append(movieData)
+
+
+
+    resp = {
+        "feedback_to": "add_new_movie",
+        "status": status,
+        "data": {
+            "field": "directorsMovies",
+            "data": directorsMovies
+        }
+    }
+
+    db.close()
+    return resp
+
+def list_movie_audiences(data, username):
+  #db things
+    db = database()
+    movieID = data.get('movieID')
+
+    query = "SELECT sessionID FROM MovieSessions WHERE movieID ='" + movieID + "'"
+
+    movieSessionDatas = db.execute(query)
+    s_check = db.save()
+
+    status = "Success"
+
+    movieAudiences=[]
+
+    if not ((not movieSessionDatas == False) and s_check):
+        status = "Fail"
+
+    else:
+        for movieSession in movieSessionDatas:
+            session_query = "SELECT userName FROM Attendances WHERE sessionID = " + str(movieSession[0])
+            sessionData = db.execute(session_query)
+            s_check = db.save()
+
+            if not ((not sessionData == False) and s_check):
+                status = "Fail"
+
+            for audiences in sessionData:
+                audiences_query = 'SELECT userName, name, surname FROM Users WHERE userName = "' + str(audiences[0]) + '"'
+                audiencesData = db.execute(audiences_query)
+                s_check = db.save()
+
+                if not ((not audiencesData == False) and s_check):
+                    status = "Fail"
+
+                movieAudiences.append(audiencesData[0])
+        print(movieAudiences)
+
+
+    resp = {
+        "feedback_to": "list_movie_audiences",
+        "status": status,
+        "data": {
+            "field": "movieAudiences",
+            "data": movieAudiences
+        }
+    }
+
+    db.close()
+    return resp
+
+
+
+handlers = {
+    "add-new-movie": add_new_movie,
+    "add-predecessor": add_predecessor,
+    "update-movie-name": update_movie_name,
+    "list-available-theatres": list_available_theatres,
+    "list-my-movies": list_my_movies,
+    "list-movie-audiences": list_movie_audiences
+}
+
+def handle_director_request(data, username):
+    return handlers[data.get('form_name')](data, username)

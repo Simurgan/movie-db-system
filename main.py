@@ -1,6 +1,4 @@
 from flask import Flask, render_template, request, redirect, session
-from datetime import date, datetime
-from flask_sqlalchemy import SQLAlchemy
 from admin_request_helpers import handle_request
 from director_request_helpers import handle_director_request
 from audience_request_helpers import handle_audience_request

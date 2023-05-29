@@ -8,6 +8,8 @@ This repository holds the 3rd project of the CMPE 321 - Introduction to Database
 * Python v3.10.9
 * Flask v2.3.2
 * mysql-connector-python v8.0.33
+* PyMySQL v1.0.3
+* cryptography v40.0.2
 
 ## Setup
 

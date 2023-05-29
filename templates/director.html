@@ -16,35 +16,36 @@
     <div style="display: flex; flex-direction: row">
       <form
         style="width: 20%; margin: auto; padding: 20px; border: 3px solid grey"
+        method="POST"
+        action="/director/"
       >
+        <input type="hidden" name="form_name" value="add-new-movie" />
         <h2 style="text-align: center">Add new movie</h2>
         <input
           placeholder="Movie ID"
           id="form2Example1"
+          name="movieID"
           class="form-control"
           required
         />
         <input
           placeholder="Movie Name"
           id="form2Example1"
+          name="movieName"
           class="form-control"
           required
         />
         <input
           placeholder="Theatre ID"
           id="form2Example1"
-          class="form-control"
-          required
-        />
-        <input
-          placeholder="Date"
-          id="form2Example1"
+          name="theatreID"
           class="form-control"
           required
         />
         <input
           placeholder="Time Slot"
           id="form2Example1"
+          name="timeSlot"
           class="form-control"
           required
         />
@@ -56,20 +57,26 @@
         >
           Add new movie
         </button>
+        <p>{{ content.feedbacks.add_new_movie }}</p>
       </form>
       <form
         style="width: 20%; margin: auto; padding: 20px; border: 3px solid grey"
+        method="POST"
+        action="/director/"
       >
+        <input type="hidden" name="form_name" value="add-predecessor" />
         <h2 style="text-align: center">Add predecessor</h2>
         <input
           placeholder="Movie ID"
           id="form2Example1"
+          name="movieID"
           class="form-control"
           required
         />
         <input
           placeholder="Predecessor Movie ID"
           id="form2Example1"
+          name="predecessorMovieID"
           class="form-control"
           required
         />
@@ -81,21 +88,27 @@
         >
           Add predecessor
         </button>
+        <p>{{ content.feedbacks.add_predecessor }}</p>
       </form>
 
       <form
         style="width: 20%; margin: auto; padding: 20px; border: 3px solid grey"
+        method="POST"
+        action="/director/"
       >
+        <input type="hidden" name="form_name" value="update-movie-name" />
         <h2 style="text-align: center">Update movie name</h2>
         <input
           placeholder="Movie ID"
           id="form2Example1"
+          name="movieID"
           class="form-control"
           required
         />
         <input
           placeholder="New movie name"
           id="form2Example1"
+          name="newMovieName"
           class="form-control"
           required
         />
@@ -107,6 +120,7 @@
         >
           Update movie name
         </button>
+        <p>{{ content.feedbacks.update_movie_name }}</p>
       </form>
 
       <div
@@ -114,16 +128,14 @@
       >
         <div style="margin: auto; display: flex; flex-direction: row">
           <h2 style="margin-right: 20px">List available theatres</h2>
-          <form>
-            <input
-              placeholder="Date"
-              id="form2Example1"
-              class="form-control"
-              required
-            />
+          <form         
+            method="POST"
+            action="/director/">
+            <input type="hidden" name="form_name" value="list-available-theatres" />
             <input
               placeholder="Slot"
               id="form2Example1"
+              name="slot"
               class="form-control"
               required
             />
@@ -134,12 +146,13 @@
             >
               List theatres
             </button>
+            <p>{{ content.feedbacks.list_available_theatres }}</p>
           </form>
         </div>
         <div style="margin: auto">
           <h3>
-            Available theatres @ slot {{ content.availableTheatres.slot }} on {{
-            content.availableTheatres.date }}
+            Available theatres: {% if content.data.availableTheatres %} @ slot {{ content.data.availableTheatres.slot }} on {{
+            content.data.availableTheatres.date }} {% endif %}
           </h3>
           <table class="table">
             <tr>
@@ -147,13 +160,13 @@
               <th>District</th>
               <th>Capacity</th>
             </tr>
-            {% for theatre in content.availableTheatres.theatres %}
+            {% if content.data.availableTheatres %} {% for theatre in content.data.availableTheatres %}
             <tr>
-              <td>{{ theatre.theatreID }}</td>
-              <td>{{ theatre.district }}</td>
-              <td>{{ theatre.capacity }}</td>
+              <td>{{ theatre.0.0 }}</td>
+              <td>{{ theatre.0.1 }}</td>
+              <td>{{ theatre.0.2 }}</td>
             </tr>
-            {% endfor %}
+            {% endfor %} {% endif %}
           </table>
         </div>
       </div>
@@ -163,14 +176,20 @@
         style="width: 40%; margin: auto; padding: 20px; border: 3px solid grey"
       >
         <div style="margin: auto; display: flex; flex-direction: row">
-          <h2 style="margin-right: 20px">My movies</h2>
-          <button
-            id="list-my-movies-submit"
-            type="submit"
-            class="btn btn-primary btn-block mb-4"
-          >
-            List my movies
-          </button>
+          <form         
+            method="POST"
+            action="/director/">
+            <input type="hidden" name="form_name" value="list-my-movies" />
+            <h2 style="margin-right: 20px">My movies</h2>
+            <button
+              id="list-my-movies-submit"
+              type="submit"
+              class="btn btn-primary btn-block mb-4"
+            >
+              List my movies
+            </button>
+            <p>{{ content.feedbacks.list_my_movies }}</p>
+          </form>
         </div>
         <div style="margin: auto">
           <table class="table">
@@ -178,20 +197,18 @@
               <th>Moive ID</th>
               <th>Movie Name</th>
               <th>Theatre ID</th>
-              <th>Date</th>
               <th>Time Slot</th>
               <th>Predecessors</th>
             </tr>
-            {% for film in content.directorsMovies %}
+            {% if content.data.directorsMovies %} {% for film in content.data.directorsMovies %}
             <tr>
-              <td>{{ film.movieID }}</td>
-              <td>{{ film.movieName }}</td>
-              <td>{{ film.theatreID }}</td>
-              <td>{{ film.date }}</td>
-              <td>{{ film.timeSlot }}</td>
-              <td>{{ film.predecessors }}</td>
+              <td>{{ film.0 }}</td>
+              <td>{{ film.1 }}</td>
+              <td>{{ film.2 }}</td>
+              <td>{{ film.3 }}</td>
+              <td>{{ film.4 }}</td>
             </tr>
-            {% endfor %}
+            {% endfor %} {% endif %}
           </table>
         </div>
       </div>
@@ -201,10 +218,14 @@
       >
         <div style="margin: auto; display: flex; flex-direction: row">
           <h2 style="margin-right: 20px">List audiences of a Movie</h2>
-          <form>
+          <form 
+            method="POST"
+            action="/director/">
+            <input type="hidden" name="form_name" value="list-movie-audiences" />
             <input
               placeholder="Movie ID"
               id="form2Example1"
+              name="movieID"
               class="form-control"
               required
             />
@@ -215,12 +236,13 @@
             >
               List audiences
             </button>
+            <p>{{ content.feedbacks.list_movie_audiences }}</p>
           </form>
         </div>
         <div style="margin: auto">
           <h3>
-            Audiences of the movie: {{ content.movieAudiences.movieName }} with
-            ID {{ content.movieAudiences.movieID }}
+            Audiences of the movie: {% if content.data.movieAudiences %} {{ content.data.movieAudiences.movieName }} with
+            ID {{ content.data.movieAudiences.movieID }} {% endif %}
           </h3>
           <table class="table">
             <tr>
@@ -228,13 +250,13 @@
               <th>Name</th>
               <th>Surname</th>
             </tr>
-            {% for audience in content.movieAudiences.audiences %}
+            {% if content.data.movieAudiences %} {% for audience in content.data.movieAudiences %}
             <tr>
-              <td>{{ audience.username }}</td>
-              <td>{{ audience.name }}</td>
-              <td>{{ audience.surname }}</td>
+              <td>{{ audience.0 }}</td>
+              <td>{{ audience.1 }}</td>
+              <td>{{ audience.2 }}</td>
             </tr>
-            {% endfor %}
+            {% endfor %} {% endif %}
           </table>
         </div>
       </div>

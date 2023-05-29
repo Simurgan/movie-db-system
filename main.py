@@ -211,7 +211,7 @@ def login():
     user_query = "SELECT * FROM users WHERE userName = '" + username + "' AND password = '" + password + "'"
     user = db.execute(user_query)
 
-    director_query = "SELECT * FROM directors WHERE username = " + username
+    director_query = "SELECT * FROM directors WHERE username = '" + username + "'"
     director = db.execute(director_query)
 
     admin_query = "SELECT * FROM databasemanagers WHERE username = '" + username + "'  AND password = '" + password + "'"

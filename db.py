@@ -14,7 +14,7 @@ class database:
   def execute(self, query):
     try:
       self.cursor.execute(query)
-      return self.cursor.fetchone()
+      return self.cursor.fetchall()
     except Exception as ex:
       print("execute error:")
       print(ex)

@@ -128,10 +128,12 @@
       >
         <div style="margin: auto; display: flex; flex-direction: row">
           <h2 style="margin-right: 20px">List available theatres</h2>
-          <form         
-            method="POST"
-            action="/director/">
-            <input type="hidden" name="form_name" value="list-available-theatres" />
+          <form method="POST" action="/director/">
+            <input
+              type="hidden"
+              name="form_name"
+              value="list-available-theatres"
+            />
             <input
               placeholder="Slot"
               id="form2Example1"
@@ -151,7 +153,8 @@
         </div>
         <div style="margin: auto">
           <h3>
-            Available theatres: {% if content.data.availableTheatres %} @ slot {{ content.data.availableTheatres.slot }} on {{
+            Available theatres: {% if content.data.availableTheatres %} @ slot
+            {{ content.data.availableTheatres.slot }} on {{
             content.data.availableTheatres.date }} {% endif %}
           </h3>
           <table class="table">
@@ -160,11 +163,12 @@
               <th>District</th>
               <th>Capacity</th>
             </tr>
-            {% if content.data.availableTheatres %} {% for theatre in content.data.availableTheatres %}
+            {% if content.data.availableTheatres %} {% for theatre in
+            content.data.availableTheatres %}
             <tr>
-              <td>{{ theatre.0.0 }}</td>
-              <td>{{ theatre.0.1 }}</td>
-              <td>{{ theatre.0.2 }}</td>
+              <td>{{ theatre.0 }}</td>
+              <td>{{ theatre.1 }}</td>
+              <td>{{ theatre.2 }}</td>
             </tr>
             {% endfor %} {% endif %}
           </table>
@@ -176,9 +180,7 @@
         style="width: 40%; margin: auto; padding: 20px; border: 3px solid grey"
       >
         <div style="margin: auto; display: flex; flex-direction: row">
-          <form         
-            method="POST"
-            action="/director/">
+          <form method="POST" action="/director/">
             <input type="hidden" name="form_name" value="list-my-movies" />
             <h2 style="margin-right: 20px">My movies</h2>
             <button
@@ -200,7 +202,8 @@
               <th>Time Slot</th>
               <th>Predecessors</th>
             </tr>
-            {% if content.data.directorsMovies %} {% for film in content.data.directorsMovies %}
+            {% if content.data.directorsMovies %} {% for film in
+            content.data.directorsMovies %}
             <tr>
               <td>{{ film.0 }}</td>
               <td>{{ film.1 }}</td>
@@ -218,10 +221,12 @@
       >
         <div style="margin: auto; display: flex; flex-direction: row">
           <h2 style="margin-right: 20px">List audiences of a Movie</h2>
-          <form 
-            method="POST"
-            action="/director/">
-            <input type="hidden" name="form_name" value="list-movie-audiences" />
+          <form method="POST" action="/director/">
+            <input
+              type="hidden"
+              name="form_name"
+              value="list-movie-audiences"
+            />
             <input
               placeholder="Movie ID"
               id="form2Example1"
@@ -241,8 +246,9 @@
         </div>
         <div style="margin: auto">
           <h3>
-            Audiences of the movie: {% if content.data.movieAudiences %} {{ content.data.movieAudiences.movieName }} with
-            ID {{ content.data.movieAudiences.movieID }} {% endif %}
+            Audiences of the movie: {% if content.data.movieAudiences %} {{
+            content.data.movieAudiences.movieName }} with ID {{
+            content.data.movieAudiences.movieID }} {% endif %}
           </h3>
           <table class="table">
             <tr>
@@ -250,7 +256,8 @@
               <th>Name</th>
               <th>Surname</th>
             </tr>
-            {% if content.data.movieAudiences %} {% for audience in content.data.movieAudiences %}
+            {% if content.data.movieAudiences %} {% for audience in
+            content.data.movieAudiences %}
             <tr>
               <td>{{ audience.0 }}</td>
               <td>{{ audience.1 }}</td>

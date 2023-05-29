@@ -89,44 +89,34 @@ def update_movie_name(data, username):
 def list_available_theatres(data, username):
     #db things
     db = database()
-
+    status = "Success"
     slot = data.get('slot')
 
+    all_t_query = "SELECT theatreID, theatreDistrict, theatreCapacity FROM theatres"
+    all_ts = db.execute(all_t_query)
 
-    query = "SELECT theatreID FROM TimeSlots WHERE slot = " + slot
+    busy_t_query = "SELECT T.theatreID FROM Theatres T INNER JOIN Movies M ON T.theatreID = M.theatreID WHERE M.timeSlot = " + slot
+    busy_ts = db.execute(busy_t_query)
 
-    theatreIDs = db.execute(query)
-    s_check = db.save()
+    submit = []
+    for t in all_ts:
+        check = True
+        for o in busy_ts:
+            if t[0] == o[0]:
+                check = False
+        
+        if check:
+            submit.append(t)
 
-    status = "Success"
-
-    availableTheatres=[]
-
-    if not ((not theatreIDs == False) and s_check):
-        status = "Fail"
-
-    else:
-        for theatreID in theatreIDs:
-            theatre_query = "SELECT theatreID, theatreDistrict, theatreCapacity FROM Theatres WHERE theatreID = " + str(theatreID[0])
-            theatreInfo = db.execute(theatre_query)
-            s_check = db.save()
-
-            if theatreInfo:
-                theatreDict={
-                    "theatreID": theatreInfo[0][0],
-                    "district": theatreInfo[0][1],
-                    "capacity": theatreInfo[0][2]
-                }
-                availableTheatres.append(theatreInfo)
-
-
+    if not submit:
+        status = "Fail: no available slots or another internal error"
 
     resp = {
         "feedback_to": "add_new_movie",
         "status": status,
         "data": {
             "field": "availableTheatres",
-            "data": availableTheatres
+            "data": submit
         }
     }
 

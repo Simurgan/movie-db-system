@@ -22,7 +22,7 @@
             padding: 20px;
             border: 3px solid grey;
           "
-          method="POST" 
+          method="POST"
           action="/audience/"
         >
           <h2 style="text-align: center">Buy A Ticket</h2>
@@ -34,7 +34,6 @@
             class="form-control"
             required
           />
-
 
           <button
             id="buy-a-ticket-submit"
@@ -54,10 +53,7 @@
           "
         >
           <h2 style="text-align: center">Rate Movie</h2>
-          <form
-            method="POST" 
-            action="/audience/">
-
+          <form method="POST" action="/audience/">
             <input type="hidden" name="form_name" value="rate-movie" />
             <input
               placeholder="Session ID"
@@ -84,7 +80,7 @@
           </form>
         </div>
       </div>
-      
+
       <div style="display: flex; flex-direction: row">
         <div
           style="
@@ -96,9 +92,7 @@
         >
           <div style="margin: auto; display: flex; flex-direction: row">
             <h2 style="margin-right: 20px">All Movies</h2>
-            <form
-              method="POST"
-              action="/audience/">
+            <form method="POST" action="/audience/">
               <input type="hidden" name="form_name" value="list-movies" />
               <button
                 id="list-movies-submit"
@@ -115,7 +109,7 @@
               <tr>
                 <th>Moive ID</th>
                 <th>Movie Name</th>
-                <th>Diretor's Username</th>
+                <th>Director's Surname</th>
                 <th>Platform</th>
                 <th>Theatre ID</th>
                 <th>Time Slot</th>
@@ -145,10 +139,12 @@
         >
           <div style="margin: auto; display: flex; flex-direction: row">
             <h2 style="margin-right: 20px">Bought Tickets</h2>
-            <form
-              method="POST"
-              action="/audience/">
-              <input type="hidden" name="form_name" value="list-bought-ticket" />
+            <form method="POST" action="/audience/">
+              <input
+                type="hidden"
+                name="form_name"
+                value="list-bought-ticket"
+              />
 
               <button
                 id="list-bought-ticket-submit"
@@ -169,7 +165,8 @@
                 <th>Rating</th>
                 <th>Overall Rating</th>
               </tr>
-              {% if content.data.userRating %} {% for rating in content.data.userRating %}
+              {% if content.data.userRating %} {% for rating in
+              content.data.userRating %}
               <tr>
                 <td>{{ rating.0 }}</td>
                 <td>{{ rating.1 }}</td>

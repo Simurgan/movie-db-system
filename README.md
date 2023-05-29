@@ -6,7 +6,8 @@ This repository holds the 3rd project of the CMPE 321 - Introduction to Database
 
 * MySQL v8.0.33
 * Python v3.10.9
-* Flask 2.3.2
+* Flask v2.3.2
+* mysql-connector-python v8.0.33
 
 ## Setup
 
@@ -17,4 +18,4 @@ This repository holds the 3rd project of the CMPE 321 - Introduction to Database
 * Make sure that MySQL server is running.
 * In the project directory set an environment variable: export FLASK_APP=main.py
 * Set some other environment variables if needed: export FLASK_ENV=development, export FLASK_DEBUG=1
-* Run the server with the command: flask run
+* Run the server with the command: flask run or python -m flask run  

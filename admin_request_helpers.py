@@ -107,14 +107,6 @@ def update_director_platform(data):
 
     if e_check == False or (not s_check):
       status = "Failed to update director platform"
-    else:
-      # update the movies
-      m_query = "UPDATE movies SET directorPlatformID = " + platform_ID + " WHERE directorUserName = '" + username + "'"
-      me_check = db.execute(m_query)
-      ms_check = db.save()
-
-      if me_check == False or (not ms_check):
-        status = "Failed to update movies of the director even though update of itself was successful!"
 
   resp = {
     "feedback_to": "update_director_platform",
@@ -205,40 +197,37 @@ def list_user_ratings(data):
 
 def list_director_movies(data):
   username = data.get('username')
-  
-  ret_data = {
-    "field": "movies",
-    "data": {
-      "director": username,
-      "movieList": [
-        {
-            "movieID": 0,
-            "movieName": "The Departed",
-            "theatreID": 5,
-            "district": "New York",
-            "timeSlot": 2
-        },
-        {
-            "movieID": 4,
-            "movieName": "The Wolf of The Wall Street",
-            "theatreID": 7,
-            "district": "Arizona",
-            "timeSlot": 3
-        },
-        {
-            "movieID": 9,
-            "movieName": "Goodfellas",
-            "theatreID": 9,
-            "district": "Coralado",
-            "timeSlot": 1
-        }
-      ]
+  ret_data = None
+  status = "Success"
+
+  db = database()
+
+  query = "SELECT M.movieID, M.movieName, M.theatreID, T.theatreDistrict, M.timeSlot FROM movies M INNER JOIN theatres T ON M.theatreID = T.theatreID WHERE M.directorUserName = '" + username + "'"
+  rec = db.execute(query)
+
+  if not rec:
+    status = "Fail: no movies directed by this director or another internal error"
+  else:
+    ret_data = {
+      "field": "movies",
+      "data": {
+        "director": username,
+        "movieList": []
+      }
     }
-  }
+
+    for movie in rec:
+      ret_data["data"]["movieList"].append({
+        "movieID": movie[0],
+        "movieName": movie[1],
+        "theatreID": movie[2],
+        "district": movie[3],
+        "timeSlot": movie[4]
+      })
 
   resp = {
     "feedback_to": "list_director_movies",
-    "status": "success",
+    "status": status,
     "data": ret_data
   }
 

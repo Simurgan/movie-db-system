@@ -88,6 +88,7 @@
           >
             Add user
           </button>
+          <p>{{ content.feedbacks.add_new_user }}</p>
         </form>
         <form
           style="
@@ -114,6 +115,7 @@
           >
             Delete audience
           </button>
+          <p>{{ content.feedbacks.delete_audience }}</p>
         </form>
         <form
           style="
@@ -152,6 +154,7 @@
           >
             Update platform id
           </button>
+          <p>{{ content.feedbacks.update_director_platform }}</p>
         </form>
         <div
           style="
@@ -179,6 +182,7 @@
               Show average rating
             </button>
           </form>
+          <p>{{ content.feedbacks.view_average_rating }}</p>
           <table class="table">
             <tr>
               <th>Movie ID</th>
@@ -186,10 +190,10 @@
               <th>Overall Rating</th>
             </tr>
             <tr>
-              {% if content.movieRating %}
-              <td>{{ content.movieRating.movieID }}</td>
-              <td>{{ content.movieRating.movieName }}</td>
-              <td>{{ content.movieRating.overallRating }}</td>
+              {% if content.data.movieRating %}
+              <td>{{ content.data.movieRating.movieID }}</td>
+              <td>{{ content.data.movieRating.movieName }}</td>
+              <td>{{ content.data.movieRating.overallRating }}</td>
               {% endif %}
             </tr>
           </table>
@@ -205,7 +209,7 @@
           "
         >
           <div style="margin: auto; display: flex; flex-direction: row">
-            <h2 style="margin-right: 20px">List ratings</h2>
+            <h2 style="margin-right: 20px">List user ratings</h2>
             <form method="POST" action="/admin/">
               <input type="hidden" name="form_name" value="list-user-ratings" />
               <input
@@ -222,12 +226,13 @@
               >
                 List ratings
               </button>
+              <p>{{ content.feedbacks.list_user_ratings }}</p>
             </form>
           </div>
           <div style="margin: auto">
             <h3>
-              Ratings of user: {% if content.userRating %} {{
-              content.userRating.username }} {% endif %}
+              Ratings of user: {% if content.data.userRating %} {{
+              content.data.userRating.username }} {% endif %}
             </h3>
             <table class="table">
               <tr>
@@ -235,8 +240,8 @@
                 <th>Movie Name</th>
                 <th>Rating</th>
               </tr>
-              {% if content.userRating %} {% for rating in
-              content.userRating.ratings %}
+              {% if content.data.userRating %} {% for rating in
+              content.data.userRating.ratings %}
               <tr>
                 <td>{{ rating.movieID }}</td>
                 <td>{{ rating.movieName }}</td>
@@ -259,8 +264,6 @@
             <h2 style="margin-right: 20px">List Movies</h2>
             <form
               value="formthis"
-              method="POST"
-              action="/admin/"
               id="list-movie-form"
               method="POST"
               action="/admin/"
@@ -284,12 +287,13 @@
               >
                 List movies
               </button>
+              <p>{{ content.feedbacks.list_director_movies }}</p>
             </form>
           </div>
           <div style="margin: auto">
             <h3>
-              Movies of director:{% if content.movies %} {{
-              content.movies.director }} {% endif %}
+              Movies of director:{% if content.data.movies %} {{
+              content.data.movies.director }} {% endif %}
             </h3>
             <table class="table">
               <tr>
@@ -299,7 +303,8 @@
                 <th>District</th>
                 <th>Time Slot</th>
               </tr>
-              {% if content.movies %} {% for film in content.movies.movieList %}
+              {% if content.data.movies %} {% for film in
+              content.data.movies.movieList %}
               <tr>
                 <td>{{ film.movieID }}</td>
                 <td>{{ film.movieName }}</td>
@@ -317,7 +322,7 @@
       >
         <div style="display: flex; flex-direction: row">
           <h2 style="text-align: center">All directors</h2>
-          <form>
+          <form method="POST" action="/admin/">
             <input type="hidden" name="form_name" value="list-directors" />
             <button
               id="display-directors"
@@ -337,8 +342,8 @@
             <th>Nation</th>
             <th>Platform_id</th>
           </tr>
-          {% if content.directorList %} {% for director in content.directorList
-          %}
+          {% if content.data.directorList %} {% for director in
+          content.data.directorList %}
           <tr>
             <td>{{ director.username }}</td>
             <td>{{ director.name }}</td>

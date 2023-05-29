@@ -7,24 +7,6 @@ from db import database
 # Create a Flask Instance
 app = Flask(__name__)
 
-"""
-#add database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password123@localhost/our_users'
-
-#Initialize the database
-db = SQLAlchemy(app)
-
-#create model
-class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True) 
-    name = db.Column(db.String(200), nullable=False) 
-    email = db.Column(db.String(200), unique=True) 
-    password = db.Column(db.String(200)) 
-
-    def __repr__(self):
-        return '<Name %r>' % self.name
-
-"""
 # Create a rouote decorator
 
 @app.route('/', methods=['GET', 'POST'])
@@ -37,93 +19,30 @@ def signin():
 @app.route('/admin/', methods=['GET', 'POST'])
 def admin():
     content = {
-        "movieRating": None,
-        "movies": None,
-        "userRating": None,
-        "directorsList": None
+        "data": {
+            "movieRating": None,
+            "movies": None,
+            "userRating": None,
+            "directorsList": None
+        },
+        "feedbacks": {
+            "add_new_user": "",
+            "delete_audience": "",
+            "update_director_platform": "",
+            "view_average_rating": "",
+            "list_user_ratings": "",
+            "list_director_movies": "",
+            "list_directors": ""
+        }
     }
 
     if request.method == 'POST':
         response = handle_request(request.form)
-        content[response["feedback_to"]] = response["status"]
-        """
-        content = {
-            "movieRating": {
-                "movieID": 0,
-                "movieName": "Inception",
-                "overallRating": 4.5
-            },
-            "movies": {
-                "director": "director1",
-                "movieList": [
-                    {
-                        "movieID": 0,
-                        "movieName": "The Departed",
-                        "theatreID": 5,
-                        "district": "New York",
-                        "timeSlot": 2
-                    },
-                    {
-                        "movieID": 4,
-                        "movieName": "The Wolf of The Wall Street",
-                        "theatreID": 7,
-                        "district": "Arizona",
-                        "timeSlot": 3
-                    },
-                    {
-                        "movieID": 9,
-                        "movieName": "Goodfellas",
-                        "theatreID": 9,
-                        "district": "Coralado",
-                        "timeSlot": 1
-                    }
-                ]
-            },
-            "userRating": {
-                "username": "audience_1",
-                "ratings": [
-                    {
-                        "movieID": 0,
-                        "movieName": "Hateful Eight",
-                        "rating": 4.9
-                    },
-                    {
-                        "movieID": 1,
-                        "movieName": "Pulp Fiction",
-                        "rating": 4.9
-                    },
-                    {
-                        "movieID": 2,
-                        "movieName": "Django: Unchained",
-                        "rating": 4.8
-                    }
-                ]
-            },
-            "directorList": [
-                {
-                    "username": "director1",
-                    "name": "director_name1",
-                    "surname": "director_surname1",
-                    "nation": "director_nationality1",
-                    "platform_id": "director_platformid1"
-                },
-                {
-                    "username": "director2",
-                    "name": "director_name2",
-                    "surname": "director_surname2",
-                    "nation": "director_nationality2",
-                    "platform_id": "director_platformid2"
-                },
-                {
-                    "username": "director3",
-                    "name": "director_name3",
-                    "surname": "director_surname3",
-                    "nation": "director_nationality3",
-                    "platform_id": "director_platformid3"
-                }
-            ]
-        }
-        """
+
+        content["feedbacks"][response["feedback_to"]] = response["status"]
+        if response["data"]:
+            content["data"][response["data"]["field"]] = response["data"]["data"]
+        
     return render_template("admin.html", content=content)
 
 @app.route('/director/', methods=['GET', 'POST'])
@@ -289,14 +208,14 @@ def login():
     db = database()
 
     # Execute a SELECT query to retrieve the user with the given username and password
-    user_query = "SELECT * FROM users WHERE userName = %s AND password = %s"
-    user = db.execute(user_query, (username, password))
+    user_query = "SELECT * FROM users WHERE userName = '" + username + "' AND password = '" + password + "'"
+    user = db.execute(user_query)
 
-    director_query = "SELECT * FROM directors WHERE username = %s"
-    director = db.execute(director_query, (username,))
+    director_query = "SELECT * FROM directors WHERE username = " + username
+    director = db.execute(director_query)
 
-    admin_query = "SELECT * FROM databasemanagers WHERE username = %s  AND password = %s"
-    admin = db.execute(admin_query, (username,password))
+    admin_query = "SELECT * FROM databasemanagers WHERE username = '" + username + "'  AND password = '" + password + "'"
+    admin = db.execute(admin_query)
 
     # Close the cursor and database connection
     db.close()

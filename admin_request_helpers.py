@@ -245,36 +245,34 @@ def list_director_movies(data):
   return resp
 
 def list_directors(data):
-  ret_data = {
-    "field": "directorList",
-    "data": [
-      {
-        "username": "director1",
-        "name": "director_name1",
-        "surname": "director_surname1",
-        "nation": "director_nationality1",
-        "platform_id": "director_platformid1"
-      },
-      {
-        "username": "director2",
-        "name": "director_name2",
-        "surname": "director_surname2",
-        "nation": "director_nationality2",
-        "platform_id": "director_platformid2"
-      },
-      {
-        "username": "director3",
-        "name": "director_name3",
-        "surname": "director_surname3",
-        "nation": "director_nationality3",
-        "platform_id": "director_platformid3"
-      }
-    ]
-  }
+  status = "Success"
+  ret_data = None
+
+  db = database()
+
+  query = "SELECT U.userName, U.name, U.surname, D.nationality, D.platformID  FROM Directors D INNER JOIN Users U ON D.userName = U.userName"
+  directors = db.execute(query)
+
+  if not directors:
+    status = "Fail: no director record or internal error"
+  else:
+    ret_data = {
+      "field": "directorList",
+      "data": []
+    }
+
+    for dir in directors:
+      ret_data["data"].append({
+        "username": dir[0],
+        "name": dir[1],
+        "surname": dir[2],
+        "nation": dir[3],
+        "platform_id": dir[4]
+      })
 
   resp = {
     "feedback_to": "list_directors",
-    "status": "success",
+    "status": status,
     "data": ret_data
   }
 
